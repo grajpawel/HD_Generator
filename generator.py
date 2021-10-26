@@ -49,6 +49,13 @@ class Worker:
         self.login = login
         self.fk_salon = fk_salon
 
+class Client:
+    def __init__(self, name="", phone=0, email=""):
+        self.name = name
+        self.phone = phone
+        self.email = email
+
+
 if __name__ == '__main__':
     myDB = pydbgen.pydb()
     year = input("Enter starting year: ")
@@ -155,12 +162,33 @@ if __name__ == '__main__':
 
 
     df = pandas.DataFrame({
-        'Szkolenie': A,
-        'Data rozpoczęcia': B,
-        'Data zakończenia': C,
-        'Koszt': D,
-        'Login': E,
-        'Imię': F,
-        "Nazwisko": G
+        'course': A,
+        'begin_date': B,
+        'completion_date': C,
+        'price': D,
+        'login': E,
+        'name': F,
+        "surname": G
     })
-    df.to_csv('excel2.csv',index=False)
+    df.to_csv('courses.csv',index=False)
+
+    # create client
+    clients_num = input("Enter number of clients: ")
+    clients = [Client() for i in range(int(clients_num))]
+    clients_df = myDB.gen_dataframe(
+        clients_num, fields=['name','phone','email'], real_email=True
+    )
+    temp = clients_df.name.str.split()
+    for i in range(len(temp)):
+        temp[i] = temp[i][0]
+    clients_df.name = temp
+    clients_df.columns = ['name', 'phone_number', 'email']
+    clients_df.to_csv('clients.csv', index=False)
+
+    # create service
+    services_df = pandas.DataFrame({
+        'id': range(len(services)),
+        'name': services,
+        'price': prices
+    })
+    services_df.to_csv('service.csv', index=False)
