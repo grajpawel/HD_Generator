@@ -5,6 +5,7 @@ import datetime
 from datetime import date
 from faker import Faker
 from pandas import Series
+import pandas
 
 def random_date(start, end):
     return start + datetime.timedelta(
@@ -48,9 +49,8 @@ if __name__ == '__main__':
     for i in range(int(workers_num)):
         workers[i].name = temp_workers.at[i].split(" ")[0]
         workers[i].surname = temp_workers.at[i].split(" ")[1]
+        workers[i].login = 1000 + i
 
-
-    print(temp_workers.at[0].split(" ")[0])
     year = input("Enter starting year: ")
     month = input("Month: ")
     day = input("Day: ")
@@ -66,7 +66,7 @@ if __name__ == '__main__':
         if((start + (iter+1)*delay) > current):
             courses_startdates.append(random_date(start + (iter*delay), current))
             courses.append(random.randint(0, len(course_lengths) - 1))
-            break;
+            break
         courses_startdates.append(random_date(start + (iter*delay), start + (iter+1)*delay))
         courses.append(random.randint(0, len(course_lengths)-1))
         iter += 1
@@ -89,3 +89,36 @@ if __name__ == '__main__':
     print(courses_enddates)
     print(courses_prices)
 
+
+    courses_attendants = int(input("How many workers attend the courses?: "))
+
+    workers_on_courses = []
+    for i in range(len(courses)):
+        workers_on_courses.append([])
+        temp_workers = random.sample(range(0,courses_attendants), random.randint(1,courses_attendants))
+        for work in temp_workers:
+            workers_on_courses[i].append(work)
+
+    # create lists to connect (sketchy)
+    A, B, C, D, E, F, G = [],[],[],[],[],[],[]
+    for i in range(len(courses_names)):
+        for j in range(len(workers_on_courses[i])):
+            A.append(courses_names[i])
+            B.append(courses_startdates[i])
+            C.append(courses_enddates[i])
+            D.append(courses_prices[i])
+            E.append(workers[workers_on_courses[i][j]].login)
+            F.append(workers[workers_on_courses[i][j]].name)
+            G.append(workers[workers_on_courses[i][j]].surname)
+
+
+    df = pandas.DataFrame({
+        'Szkolenie': A,
+        'Data rozpoczęcia': B,
+        'Data zakończenia': C,
+        'Koszt': D,
+        'Login': E,
+        'Imię': F,
+        "Nazwisko": G
+    })
+    df.to_csv('excel2.csv',index=False)
