@@ -15,18 +15,50 @@ def random_date(start, end):
 def generate_salons(myDB):
     salon_num = input("Enter number of salons:")
     salondf = myDB.gen_dataframe(salon_num, fields=['zipcode', 'street_address', 'city'])
-    salondf.to_csv('salons.csv', index=True)
+    salondf.to_csv('salons.csv', index=True, index_label='id')
     return salondf
 
+
+def generate_devices(start, end, myDB, salonsdf):
+    A, B, C, D, E, F, G = [ ], [ ], [ ], [ ], [ ], [ ], [ ]
+    devices_num = input("Enter number of devices:")
+    salons_num = len(salonsdf.index)
+    dev_stat = ["Running", "Broken", "Running", "Running", "Running"]
+    for i in range(int(devices_num)):
+        A.append(random.randint(0, salons_num))
+        B.append(dev_stat[random.randint(0, len(dev_stat)-1)])
+        C.append(random_date(end, end+(datetime.timedelta(days=(366)))))
+        D.append(random_date(end, end))
+        E.append(round(random.uniform(500,10000), 2))
+
+    df = pandas.DataFrame({
+        'fk_salon': A,
+        'state': B,
+        'service_date': C,
+        'purchase_date': D,
+        'price': E
+    })
+    df.to_csv('devices.csv', index=True, index_label='id')
+    return df
+
+
 class Worker:
-    def __init__(self, name="", surname="", login=0):
+    def __init__(self, name="", surname="", login=0, fk_salon=0):
         self.name = name
         self.surname = surname
         self.login = login
+        self.fk_salon = fk_salon
 
 if __name__ == '__main__':
     myDB = pydbgen.pydb()
-    print(generate_salons(myDB))
+    year = input("Enter starting year: ")
+    month = input("Month: ")
+    day = input("Day: ")
+    start = datetime.datetime(int(year),int(month),int(day))
+    current = datetime.datetime.today()
+    salonsdf = generate_salons(myDB)
+    devicesdf = generate_devices(start, current, myDB, salonsdf)
+
     services = ["Manicure", "Pedicure", "Body Waxing", "Face Waxing", "Event Makeup", "Wedding Specials",
                 "Massage", "Eyebrow Shaping", "Eyelash Extension", "Milk Peel", "Derma Roller", "Freckle Bleaching",
                 "Acne Treatments", "Moisturizing Facials", "Hair Conditioning", "Haircut"]
@@ -47,18 +79,27 @@ if __name__ == '__main__':
     workers_num = input("Enter number of workers: ")
     workers = [Worker() for i in range(int(workers_num))]
     temp_workers = myDB.gen_data_series(num=int(workers_num), data_type='name')
+    A, B, C, D = [ ], [ ], [ ], [ ]
     for i in range(int(workers_num)):
         workers[i].name = temp_workers.at[i].split(" ")[0]
+        A.append(temp_workers.at[i].split(" ")[0])
         workers[i].surname = temp_workers.at[i].split(" ")[1]
+        B.append(temp_workers.at[i].split(" ")[1])
         workers[i].login = 1000 + i
+        C.append(1000 + i)
+        workers[i].fk_salon = random.randint(0, len(salonsdf.index)-1)
+        D.append(workers[i].fk_salon)
 
-    year = input("Enter starting year: ")
-    month = input("Month: ")
-    day = input("Day: ")
+    workersdf = pandas.DataFrame({
+        'name': A,
+        'surname': B,
+        'login': C,
+        'fk_salon': D
+    })
+    workersdf.to_csv('workers.csv', index=False)
 
-    start = datetime.datetime(int(year),int(month),int(day))
+
     course_frequency = input("How many times a year courses take place?: ")
-    current = datetime.datetime.today()
     delay = datetime.timedelta(days=(365/int(course_frequency)))
     courses_startdates = []
     courses = []
