@@ -11,6 +11,11 @@ def random_date(start, end):
         seconds=random.randint(0, int((end - start).total_seconds())),
     )
 
+def generate_salons(myDB):
+    salon_num = input("Enter number of salons:")
+    salondf = myDB.gen_dataframe(salon_num, fields=['zipcode','city', 'street_address'])
+    return salondf
+
 class Worker:
     def __init__(self, name="", surname="", login=0):
         self.name = name
@@ -19,6 +24,7 @@ class Worker:
 
 if __name__ == '__main__':
     myDB = pydbgen.pydb()
+    print(generate_salons(myDB))
     services = ["Manicure", "Pedicure", "Body Waxing", "Face Waxing", "Event Makeup", "Wedding Specials",
                 "Massage", "Eyebrow Shaping", "Eyelash Extension", "Milk Peel", "Derma Roller", "Freckle Bleaching",
                 "Acne Treatments", "Moisturizing Facials", "Hair Conditioning", "Haircut"]
