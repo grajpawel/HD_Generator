@@ -14,7 +14,8 @@ def random_date(start, end):
 
 def generate_salons(myDB):
     salon_num = input("Enter number of salons:")
-    salondf = myDB.gen_dataframe(salon_num, fields=['zipcode','city', 'street_address'])
+    salondf = myDB.gen_dataframe(salon_num, fields=['zipcode', 'street_address', 'city'])
+    salondf.to_csv('salons.csv', index=True)
     return salondf
 
 class Worker:
