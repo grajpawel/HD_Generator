@@ -212,7 +212,7 @@ if __name__ == '__main__':
         execution_workers.append(workers[random.randint(0, int(workers_num) - 1)].login)
         execution_devices.append(random.randint(0, len(devicesdf.index) - 1))
         execution_appointments.append(random.randint(0, int(appointments_num) - 1))
-        execution_done.append(True)
+        execution_done.append(1)
         execution_rating.append(random.randint(1, 10))
         execution_price.append(services_df.price[temp_service_id] * random.choice([1, 1, 1, 1, 1, 1, 1, 0.9, 0.8]))
 
@@ -263,9 +263,9 @@ if __name__ == '__main__':
             for exe in list_of_executions:
                 price += execution_price[exe]
                 rating += execution_rating[exe]
-            rating = rating / len(list_of_executions)
+            rating = round(rating / len(list_of_executions), 2)
             appointments_ratings.append(rating)
-            appointments_prices.append(price)
+            appointments_prices.append(round(price, 2))
 
     appointments_df = pandas.DataFrame({
         'id': range(len(appointments_dates)),
