@@ -301,11 +301,11 @@ if __name__ == '__main__':
 
     salonsdf2 = generate_salons(myDB, False)
     salonsdf = salonsdf.append(salonsdf2, ignore_index=True)
-    salonsdf.to_csv('salons2.csv', index=False)
+    salonsdf.to_csv('salons2.csv', index=True, index_label='id')20
 
     devicesdf2 = generate_devices(start, current, myDB, salonsdf, False)
     devicesdf = devicesdf.append(devicesdf2, ignore_index=True)
-    devicesdf.to_csv('devices2.csv', index=False)
+    devicesdf.to_csv('devices2.csv', index=True, index_label='id')
 
     start = datetime.datetime(int(year), int(month), int(day))
     current = datetime.datetime.today()
