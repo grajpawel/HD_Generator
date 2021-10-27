@@ -91,7 +91,7 @@ if __name__ == '__main__':
         prices_courses[i] += prices_courses[i] * random.choice([0, 5, 10, 15, 20, 25]) / 100
 
     workers_num = input("Enter number of workers: ")
-    workers = [Worker() for i in range(int(workers_num*5))]
+    workers = [Worker() for i in range(int(workers_num*2))]
 
     # dates of courses
     temp_workers = myDB.gen_data_series(num=int(workers_num), data_type='name')
@@ -235,7 +235,7 @@ if __name__ == '__main__':
 
     # appointment continuation
     timespan = current - start
-    delay = datetime.timedelta(days=(timespan.days / int(course_frequency)))
+    delay = datetime.timedelta(days=(timespan.days / int(appointments_num)))
     appointments_dates = []
     appointments_salons = []
     appointments_clients = []
@@ -417,7 +417,7 @@ if __name__ == '__main__':
     for i in range(int(executions_num)):
         temp_service_id = random.randint(0, len(services_df.index) - 1)
         execution_services.append(temp_service_id)
-        execution_workers.append(workers[random.randint(0, int(workers_num) - 1)].login)
+        execution_workers.append(workers[random.randint(0, int(workers_num) + workers_old - 1)].login)
         execution_devices.append(random.randint(0, len(devicesdf.index) - 1))
         execution_appointments.append((i % int(appointments_num))+int(appointments_old))
         execution_done.append(True)
@@ -437,7 +437,7 @@ if __name__ == '__main__':
 
     # appointment continuation
     timespan = current - start
-    delay = datetime.timedelta(days=(timespan.days / int(course_frequency)))
+    delay = datetime.timedelta(days=(timespan.days / int(appointments_num)))
     ids = []
     for i in range(int(appointments_num)):
         list_of_executions = [j for j, x in enumerate(execution_appointments) if x == i]
