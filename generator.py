@@ -14,14 +14,15 @@ def random_date(start, end):
     )
 
 
-def generate_salons(myDB):
+def generate_salons(myDB, csv):
     salon_num = input("Enter number of salons:")
     salondf = myDB.gen_dataframe(salon_num, fields=['zipcode', 'street_address', 'city'])
-    salondf.to_csv('salons.csv', index=True, index_label='id')
+    if(csv):
+        salondf.to_csv('salons.csv', index=True, index_label='id')
     return salondf
 
 
-def generate_devices(start, end, myDB, salonsdf):
+def generate_devices(start, end, myDB, salonsdf, csv):
     A, B, C, D, E, F, G = [], [], [], [], [], [], []
     devices_num = input("Enter number of devices:")
     salons_num = len(salonsdf.index)
@@ -40,7 +41,8 @@ def generate_devices(start, end, myDB, salonsdf):
         'purchase_date': D,
         'price': E
     })
-    df.to_csv('devices.csv', index=True, index_label='id')
+    if(csv):
+        df.to_csv('devices.csv', index=True, index_label='id')
     return df
 
 
@@ -70,8 +72,8 @@ if __name__ == '__main__':
     month = input("Month: ")
     day = input("Day: ")
     current = datetime.datetime(int(year), int(month), int(day))
-    salonsdf = generate_salons(myDB)
-    devicesdf = generate_devices(start, current, myDB, salonsdf)
+    salonsdf = generate_salons(myDB, True)
+    devicesdf = generate_devices(start, current, myDB, salonsdf, True)
 
     services = ["Manicure", "Pedicure", "Body Waxing", "Face Waxing", "Event Makeup", "Wedding Specials",
                 "Massage", "Eyebrow Shaping", "Eyelash Extension", "Milk Peel", "Derma Roller", "Freckle Bleaching",
@@ -218,7 +220,7 @@ if __name__ == '__main__':
         execution_workers.append(workers[random.randint(0, int(workers_num) - 1)].login)
         execution_devices.append(random.randint(0, len(devicesdf.index) - 1))
         execution_appointments.append(i % int(appointments_num))
-        execution_done.append(True)
+        execution_done.append(1)
         execution_rating.append(random.randint(1, 10))
         execution_price.append(services_df.price[temp_service_id] * random.choice([1, 1, 1, 1, 1, 1, 1, 0.9, 0.8]))
 
@@ -291,6 +293,19 @@ if __name__ == '__main__':
         ind = int(input("Enter index of service: "))
         price = int(input("Enter new price: "))
         prices[ind] = price
+    how_many_surnames = int(input("Enter number of surnames to change: "))
+    for i in range(how_many_prices):
+        ind = int(input("Enter index (not login) of worker: "))
+        surname = input("Enter new surname: ")
+        B1[ind] = surname
+
+    salonsdf2 = generate_salons(myDB, False)
+    salonsdf = salonsdf.append(salonsdf2, ignore_index=True)
+    salonsdf.to_csv('salons2.csv', index=False)
+
+    devicesdf2 = generate_devices(start, current, myDB, salonsdf, False)
+    devicesdf = devicesdf.append(devicesdf2, ignore_index=True)
+    devicesdf.to_csv('devices2.csv', index=False)
 
     start = datetime.datetime(int(year), int(month), int(day))
     current = datetime.datetime.today()
@@ -420,7 +435,7 @@ if __name__ == '__main__':
         execution_workers.append(workers[random.randint(0, int(workers_num) + workers_old - 1)].login)
         execution_devices.append(random.randint(0, len(devicesdf.index) - 1))
         execution_appointments.append((i % int(appointments_num))+int(appointments_old))
-        execution_done.append(True)
+        execution_done.append(1)
         execution_rating.append(random.randint(2, 10))
         execution_price.append(services_df.price[temp_service_id] * random.choice([1, 1, 1, 1, 1, 1, 1, 0.9, 0.8]))
 
